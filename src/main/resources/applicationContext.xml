@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+	http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs
+	http://cxf.apache.org/schemas/jaxrs.xsd"
+	default-autowire="byName" default-lazy-init="true">
+
+	<description>Spring configuration files</description>
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-jaxrs-binding.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="classpath:applicationContext-db.xml"/>
+	
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:mysql.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<jaxrs:server id="ecloudapi" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="defaultUniversalApi" />
+		</jaxrs:serviceBeans>
+	</jaxrs:server>
+
+	<!-- Global API -->
+	<bean id="defaultUniversalApi"
+		class="com.chinaops.ecloud.racenter.api.impl.DefaultUniversalApi">
+		<property name="userService" ref="userService" />
+		<property name="companyService" ref="companyService" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="roleService" ref="roleService" />
+		<property name="privilegeService" ref="privilegeService" />
+		<property name="dynamicPasswordCardService" ref="dynamicPasswordCardService" />
+		<property name="adminUserService" ref="adminUserService" />
+	</bean>
+
+	<!-- Services module -->
+	<bean id="userService" class="com.chinaops.ecloud.racenter.service.UserService">
+		<property name="userDao" ref="userDao" />
+	</bean>
+	
+	<bean id="companyService" class="com.chinaops.ecloud.racenter.service.CompanyService">
+		<property name="companyDao" ref="companyDao" />
+	</bean>
+
+	<bean id="departmentService" class="com.chinaops.ecloud.racenter.service.DepartmentService">
+		<property name="departmentDao" ref="departmentDao" />
+	</bean>
+
+	<bean id="roleService" class="com.chinaops.ecloud.racenter.service.RoleService">
+		<property name="roleDao" ref="roleDao" />
+	</bean>
+
+	<bean id="privilegeService" class="com.chinaops.ecloud.racenter.service.PrivilegeService">
+		<property name="privilegeDao" ref="privilegeDao" />
+	</bean>
+	
+	<bean id="dynamicPasswordCardService" class="com.chinaops.ecloud.racenter.service.DynamicPasswordCardService">
+		<property name="dynamicCardDao" ref="dynamicCardDao" />
+	</bean>
+	
+	<bean id="adminUserService" class="com.chinaops.ecloud.racenter.service.SysAdminUserService">
+		<property name="sysAdminUserDao" ref="sysAdminUserDao" />
+	</bean>
+	
+	
+	
+	<!-- Data Access module -->
+	
+	<bean id="userDao" class="com.chinaops.ecloud.racenter.dao.impl.UserDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="sysAdminUserDao" class="com.chinaops.ecloud.racenter.dao.impl.SysAdminUserDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="companyDao" class="com.chinaops.ecloud.racenter.dao.impl.CompanyDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="departmentDao" class="com.chinaops.ecloud.racenter.dao.impl.DepartmentDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="roleDao" class="com.chinaops.ecloud.racenter.dao.impl.RoleDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="privilegeDao" class="com.chinaops.ecloud.racenter.dao.impl.PrivilegeDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="dynamicCardDao" class="com.chinaops.ecloud.racenter.dao.impl.DynamicPasswordCardDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+		<property name="companyDao" ref="companyDao" />
+		<property name="userDao" ref="userDao" />
+	</bean>
+	
+	
+</beans>
